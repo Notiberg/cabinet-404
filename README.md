@@ -1,46 +1,78 @@
-# Getting Started with Create React App
+# Кабинет 404 - Telegram Mini App
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+Система управления рабочими процессами лаборатории с современным дизайном в стиле iOS liquid glass.
 
-## Available Scripts
+## 🚀 Особенности
 
-In the project directory, you can run:
+- **Авторизация пользователей** - 5 ролей с разными уровнями доступа
+- **Управление задачами** - создание, назначение, отслеживание статусов
+- **Отслеживание металла** - контроль испытаний и образцов
+- **Закрытие работ** - управление завершением проектов
+- **Отслеживание документов** - контроль документооборота
+- **Календарь** - планирование и визуализация сроков
+- **Профили пользователей** - персональная статистика и настройки
 
-### `npm start`
+## 🎨 Дизайн
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+- **iOS 26 liquid glass стиль** - современный полупрозрачный интерфейс
+- **Адаптивность** - работает на мобильных, планшетах и десктопах
+- **Анимации** - плавные переходы с Framer Motion
+- **Темная тема** - профессиональный вид для рабочих приложений
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
+## 👥 Пользователи
 
-### `npm test`
+1. **Антипин Ярослав Алексеевич** - Лаборант
+2. **Низиенко Марина Олеговна** - Научный сотрудник
+3. **Кошевой Евгений Олегович** - Старший научный сотрудник
+4. **Гаврилова Полина Александровна** - Научный сотрудник
+5. **Погорелов Егор Васильевич** - Руководитель лаборатории
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+## 🛠 Технологии
 
-### `npm run build`
+- **React 18** - основной фреймворк
+- **TypeScript** - типизация
+- **Zustand** - управление состоянием
+- **Framer Motion** - анимации
+- **React Router** - маршрутизация
+- **Date-fns** - работа с датами
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+## 🚀 Запуск проекта
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+### Установка зависимостей
+```bash
+npm install
+```
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+### Запуск в режиме разработки
+```bash
+npm start
+```
+Откройте [http://localhost:3000](http://localhost:3000) для просмотра в браузере.
 
-### `npm run eject`
+### Сборка для продакшена
+```bash
+npm run build
+```
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+## 🔐 Авторизация
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+Для входа в систему используйте логины пользователей и соответствующие пароли.
+Логины отображаются на странице входа для удобства.
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
+## 📱 Структура приложения
 
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
+- **Главная** - обзор всех разделов
+- **Задачи** - управление задачами команды
+- **Отслеживание металла** - контроль испытаний
+- **Закрытия** - завершение работ
+- **Отслеживание документов** - документооборот
+- **Календарь** - планирование сроков
+- **Профиль** - личный кабинет пользователя
 
-## Learn More
+## 🌐 Развертывание
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+Проект готов для развертывания на Vercel, Netlify или других платформах для статических сайтов.
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+## 📄 Лицензия
+
+Проект создан для внутреннего использования лаборатории.

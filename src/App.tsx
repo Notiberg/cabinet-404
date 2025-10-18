@@ -1,25 +1,33 @@
 import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import SimpleBottomNavigation from './components/SimpleBottomNavigation';
+import SimpleHomePage from './pages/SimpleHomePage';
+import SimpleTasksPage from './pages/SimpleTasksPage';
+import MetalTrackingPage from './pages/MetalTrackingPage';
+import WorkClosurePage from './pages/WorkClosurePage';
+import DocumentTrackingPage from './pages/DocumentTrackingPage';
+import CalendarPage from './pages/CalendarPage';
+import ProfilePage from './pages/ProfilePage';
 
 function App() {
+  // Убираем автоматическую установку пользователя, теперь есть авторизация
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <Router>
+      <div style={{minHeight: '100vh'}}>
+        <Routes>
+          <Route path="/" element={<SimpleHomePage />} />
+          <Route path="/tasks" element={<SimpleTasksPage />} />
+          <Route path="/metal-tracking" element={<MetalTrackingPage />} />
+          <Route path="/work-closure" element={<WorkClosurePage />} />
+          <Route path="/document-tracking" element={<DocumentTrackingPage />} />
+          <Route path="/calendar" element={<CalendarPage />} />
+          <Route path="/profile" element={<ProfilePage />} />
+        </Routes>
+        
+        <SimpleBottomNavigation />
+      </div>
+    </Router>
   );
 }
 
