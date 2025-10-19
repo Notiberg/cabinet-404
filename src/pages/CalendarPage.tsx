@@ -245,7 +245,7 @@ const CalendarPage: React.FC = () => {
               ← Предыдущий
             </motion.button>
             
-            <h2 style={{ fontSize: '1.25rem', fontWeight: '600', margin: 0 }}>
+            <h2 style={{ fontSize: '1.25rem', fontWeight: '600', margin: 0, textAlign: 'center', flex: 1 }}>
               {format(currentDate, 'LLLL yyyy', { locale: ru })}
             </h2>
             
