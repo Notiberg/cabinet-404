@@ -143,6 +143,12 @@ const CalendarPage: React.FC = () => {
     fontSize: '14px',
   };
 
+  const navigationButtonStyle: React.CSSProperties = {
+    ...buttonStyle,
+    padding: window.innerWidth <= 768 ? '6px 12px' : '8px 16px',
+    fontSize: window.innerWidth <= 768 ? '12px' : '14px',
+  };
+
   return (
     <div style={containerStyle}>
       <motion.div
@@ -151,7 +157,7 @@ const CalendarPage: React.FC = () => {
         transition={{ duration: 0.6 }}
       >
         {/* Header */}
-        <div style={{ marginBottom: '24px' }}>
+        <div style={{ marginBottom: '24px', textAlign: 'center' }}>
           <h1 style={{ fontSize: '1.75rem', fontWeight: 'bold', color: 'white', margin: '0 0 8px 0' }}>
             Календарь
           </h1>
@@ -232,7 +238,7 @@ const CalendarPage: React.FC = () => {
         <div style={cardStyle}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
             <motion.button
-              style={buttonStyle}
+              style={navigationButtonStyle}
               onClick={() => setCurrentDate(subMonths(currentDate, 1))}
               whileTap={{ scale: 0.95 }}
             >
@@ -244,7 +250,7 @@ const CalendarPage: React.FC = () => {
             </h2>
             
             <motion.button
-              style={buttonStyle}
+              style={navigationButtonStyle}
               onClick={() => setCurrentDate(addMonths(currentDate, 1))}
               whileTap={{ scale: 0.95 }}
             >

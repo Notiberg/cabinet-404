@@ -6,7 +6,7 @@ import { format } from 'date-fns';
 import { ru } from 'date-fns/locale';
 
 const MetalTrackingPage: React.FC = () => {
-  const { metalTracking, addMetalTracking, updateMetalTracking, deleteMetalTracking } = useAppStore();
+  const { metalTracking, currentUser, addMetalTracking, updateMetalTracking, deleteMetalTracking } = useAppStore();
   const [showAddForm, setShowAddForm] = useState(false);
   
   const [newMetal, setNewMetal] = useState({
@@ -127,19 +127,21 @@ const MetalTrackingPage: React.FC = () => {
             </p>
           </div>
           
-          <motion.button
-            style={buttonStyle}
-            whileTap={{ scale: 0.95 }}
-            onClick={() => setShowAddForm(true)}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.background = 'rgba(255, 255, 255, 0.25)';
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.background = 'rgba(255, 255, 255, 0.15)';
-            }}
-          >
-            + Добавить
-          </motion.button>
+          {currentUser && (
+            <motion.button
+              style={buttonStyle}
+              whileTap={{ scale: 0.95 }}
+              onClick={() => setShowAddForm(true)}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.background = 'rgba(255, 255, 255, 0.25)';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.background = 'rgba(255, 255, 255, 0.15)';
+              }}
+            >
+              + Добавить
+            </motion.button>
+          )}
         </div>
 
         {/* Metal Tracking List */}

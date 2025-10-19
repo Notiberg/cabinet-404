@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useAppStore } from '../store';
 
 const DocumentTrackingPage: React.FC = () => {
-  const { documentTracking, addDocumentTracking, updateDocumentTracking, deleteDocumentTracking } = useAppStore();
+  const { documentTracking, currentUser, addDocumentTracking, updateDocumentTracking, deleteDocumentTracking } = useAppStore();
   const [showAddForm, setShowAddForm] = useState(false);
   
   const [newDocument, setNewDocument] = useState({
@@ -107,19 +107,21 @@ const DocumentTrackingPage: React.FC = () => {
             </p>
           </div>
           
-          <motion.button
-            style={buttonStyle}
-            whileTap={{ scale: 0.95 }}
-            onClick={() => setShowAddForm(true)}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.background = 'rgba(255, 255, 255, 0.25)';
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.background = 'rgba(255, 255, 255, 0.15)';
-            }}
-          >
-            + Добавить
-          </motion.button>
+          {currentUser && (
+            <motion.button
+              style={buttonStyle}
+              whileTap={{ scale: 0.95 }}
+              onClick={() => setShowAddForm(true)}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.background = 'rgba(255, 255, 255, 0.25)';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.background = 'rgba(255, 255, 255, 0.15)';
+              }}
+            >
+              + Добавить
+            </motion.button>
+          )}
         </div>
 
         {/* Document Tracking List */}

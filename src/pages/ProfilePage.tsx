@@ -68,10 +68,13 @@ const ProfilePage: React.FC = () => {
   const containerStyle: React.CSSProperties = {
     minHeight: '100vh',
     padding: '16px',
-    paddingTop: '64px',
+    paddingTop: '20px',
     paddingBottom: '96px',
     maxWidth: '800px',
     margin: '0 auto',
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'flex-start',
   };
 
   const cardStyle: React.CSSProperties = {
@@ -116,6 +119,7 @@ const ProfilePage: React.FC = () => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
+          style={{ width: '100%' }}
         >
           <div style={cardStyle}>
             <h1 style={{ fontSize: '1.75rem', fontWeight: 'bold', textAlign: 'center', margin: '0 0 32px 0' }}>
@@ -209,6 +213,7 @@ const ProfilePage: React.FC = () => {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6 }}
+        style={{ width: '100%' }}
       >
         {/* User Profile Header */}
         <div style={cardStyle}>

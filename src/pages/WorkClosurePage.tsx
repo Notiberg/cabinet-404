@@ -5,7 +5,7 @@ import { format } from 'date-fns';
 import { ru } from 'date-fns/locale';
 
 const WorkClosurePage: React.FC = () => {
-  const { workClosures, addWorkClosure, updateWorkClosure, deleteWorkClosure } = useAppStore();
+  const { workClosures, currentUser, addWorkClosure, updateWorkClosure, deleteWorkClosure } = useAppStore();
   const [showAddForm, setShowAddForm] = useState(false);
   
   const [newWork, setNewWork] = useState({
@@ -115,19 +115,21 @@ const WorkClosurePage: React.FC = () => {
             </p>
           </div>
           
-          <motion.button
-            style={buttonStyle}
-            whileTap={{ scale: 0.95 }}
-            onClick={() => setShowAddForm(true)}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.background = 'rgba(255, 255, 255, 0.25)';
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.background = 'rgba(255, 255, 255, 0.15)';
-            }}
-          >
-            + Добавить
-          </motion.button>
+          {currentUser && (
+            <motion.button
+              style={buttonStyle}
+              whileTap={{ scale: 0.95 }}
+              onClick={() => setShowAddForm(true)}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.background = 'rgba(255, 255, 255, 0.25)';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.background = 'rgba(255, 255, 255, 0.15)';
+              }}
+            >
+              + Добавить
+            </motion.button>
+          )}
         </div>
 
         {/* Work Closures List */}
