@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAppStore } from '../store';
 import { format } from 'date-fns';
@@ -7,6 +7,10 @@ import { ru } from 'date-fns/locale';
 const WorkClosurePage: React.FC = () => {
   const { workClosures, currentUser, addWorkClosure, updateWorkClosure, deleteWorkClosure } = useAppStore();
   const [showAddForm, setShowAddForm] = useState(false);
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
   
   const [newWork, setNewWork] = useState({
     factory: '',
@@ -301,31 +305,30 @@ const WorkClosurePage: React.FC = () => {
                     />
                   </div>
 
-                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
-                    <div>
-                      <label style={{ display: 'block', fontSize: '0.875rem', color: 'rgba(255, 255, 255, 0.7)', marginBottom: '8px' }}>
-                        Диаметр (мм)
-                      </label>
-                      <input
-                        type="number"
-                        style={inputStyle}
-                        placeholder="Диаметр"
-                        value={newWork.diameter}
-                        onChange={(e) => setNewWork({ ...newWork, diameter: e.target.value })}
-                      />
-                    </div>
-                    <div>
-                      <label style={{ display: 'block', fontSize: '0.875rem', color: 'rgba(255, 255, 255, 0.7)', marginBottom: '8px' }}>
-                        Толщина стенки (мм)
-                      </label>
-                      <input
-                        type="number"
-                        style={inputStyle}
-                        placeholder="Толщина"
-                        value={newWork.thickness}
-                        onChange={(e) => setNewWork({ ...newWork, thickness: e.target.value })}
-                      />
-                    </div>
+                  <div>
+                    <label style={{ display: 'block', fontSize: '0.875rem', color: 'rgba(255, 255, 255, 0.7)', marginBottom: '8px' }}>
+                      Диаметр (мм)
+                    </label>
+                    <input
+                      type="number"
+                      style={inputStyle}
+                      placeholder="Диаметр"
+                      value={newWork.diameter}
+                      onChange={(e) => setNewWork({ ...newWork, diameter: e.target.value })}
+                    />
+                  </div>
+
+                  <div>
+                    <label style={{ display: 'block', fontSize: '0.875rem', color: 'rgba(255, 255, 255, 0.7)', marginBottom: '8px' }}>
+                      Толщина стенки (мм)
+                    </label>
+                    <input
+                      type="number"
+                      style={inputStyle}
+                      placeholder="Толщина"
+                      value={newWork.thickness}
+                      onChange={(e) => setNewWork({ ...newWork, thickness: e.target.value })}
+                    />
                   </div>
 
                   <div>

@@ -26,7 +26,7 @@ export interface MetalTracking {
   diameter: string;
   thickness: string;
   melt: string;
-  testType: 'DP_tension' | 'technological' | 'metallographic';
+  testType: 'DP_tension' | 'technological' | 'metallographic' | 'experimental_plant';
   samplesCount: number;
   testEndDate: Date;
   status: 'working' | 'completed' | 'overdue';
@@ -76,4 +76,4 @@ export interface UserStats {
 
 export type StatusType = 'working' | 'completed' | 'overdue';
 export type PriorityType = 'low' | 'medium' | 'high';
-export type TestType = 'DP_tension' | 'technological' | 'metallographic';
+export type TestType = 'DP_tension' | 'technological' | 'metallographic' | 'experimental_plant';

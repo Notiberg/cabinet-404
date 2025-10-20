@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAppStore } from '../store';
 import { TestType } from '../types';
@@ -8,6 +8,10 @@ import { ru } from 'date-fns/locale';
 const MetalTrackingPage: React.FC = () => {
   const { metalTracking, currentUser, addMetalTracking, updateMetalTracking, deleteMetalTracking } = useAppStore();
   const [showAddForm, setShowAddForm] = useState(false);
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
   
   const [newMetal, setNewMetal] = useState({
     factory: '',
@@ -65,6 +69,7 @@ const MetalTrackingPage: React.FC = () => {
       case 'DP_tension': return 'ДП и растяжение';
       case 'technological': return 'Технологические';
       case 'metallographic': return 'Металлография';
+      case 'experimental_plant': return 'Опытный завод';
     }
   };
 
@@ -313,31 +318,30 @@ const MetalTrackingPage: React.FC = () => {
                     />
                   </div>
 
-                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
-                    <div>
-                      <label style={{ display: 'block', fontSize: '0.875rem', color: 'rgba(255, 255, 255, 0.7)', marginBottom: '8px' }}>
-                        Диаметр (мм)
-                      </label>
-                      <input
-                        type="number"
-                        style={inputStyle}
-                        placeholder="Диаметр"
-                        value={newMetal.diameter}
-                        onChange={(e) => setNewMetal({ ...newMetal, diameter: e.target.value })}
-                      />
-                    </div>
-                    <div>
-                      <label style={{ display: 'block', fontSize: '0.875rem', color: 'rgba(255, 255, 255, 0.7)', marginBottom: '8px' }}>
-                        Толщина стенки (мм)
-                      </label>
-                      <input
-                        type="number"
-                        style={inputStyle}
-                        placeholder="Толщина"
-                        value={newMetal.thickness}
-                        onChange={(e) => setNewMetal({ ...newMetal, thickness: e.target.value })}
-                      />
-                    </div>
+                  <div>
+                    <label style={{ display: 'block', fontSize: '0.875rem', color: 'rgba(255, 255, 255, 0.7)', marginBottom: '8px' }}>
+                      Диаметр (мм)
+                    </label>
+                    <input
+                      type="number"
+                      style={inputStyle}
+                      placeholder="Диаметр"
+                      value={newMetal.diameter}
+                      onChange={(e) => setNewMetal({ ...newMetal, diameter: e.target.value })}
+                    />
+                  </div>
+
+                  <div>
+                    <label style={{ display: 'block', fontSize: '0.875rem', color: 'rgba(255, 255, 255, 0.7)', marginBottom: '8px' }}>
+                      Толщина стенки (мм)
+                    </label>
+                    <input
+                      type="number"
+                      style={inputStyle}
+                      placeholder="Толщина"
+                      value={newMetal.thickness}
+                      onChange={(e) => setNewMetal({ ...newMetal, thickness: e.target.value })}
+                    />
                   </div>
 
                   <div>
@@ -365,6 +369,7 @@ const MetalTrackingPage: React.FC = () => {
                       <option value="DP_tension">ДП и растяжение</option>
                       <option value="technological">Технологические</option>
                       <option value="metallographic">Металлография</option>
+                      <option value="experimental_plant">Опытный завод</option>
                     </select>
                   </div>
 
@@ -387,7 +392,12 @@ const MetalTrackingPage: React.FC = () => {
                     </label>
                     <input
                       type="date"
-                      style={inputStyle}
+                      style={{
+                        ...inputStyle,
+                        maxWidth: '200px',
+                        fontSize: '12px',
+                        padding: '8px'
+                      }}
                       value={newMetal.testEndDate}
                       onChange={(e) => setNewMetal({ ...newMetal, testEndDate: e.target.value })}
                     />

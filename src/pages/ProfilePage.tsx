@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAppStore } from '../store';
 
@@ -8,6 +8,10 @@ const ProfilePage: React.FC = () => {
   const [loginData, setLoginData] = useState({ login: '', password: '' });
   const [loginError, setLoginError] = useState('');
   const [activeSection, setActiveSection] = useState<string | null>(null);
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
 
   // Проверяем авторизацию при загрузке компонента
   React.useEffect(() => {

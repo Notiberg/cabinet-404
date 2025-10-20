@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { useAppStore } from '../store';
 import { format, startOfMonth, endOfMonth, eachDayOfInterval, isSameDay, addMonths, subMonths, isToday, isSameMonth, startOfWeek, endOfWeek } from 'date-fns';
@@ -22,6 +22,10 @@ const CalendarPage: React.FC = () => {
   const [typeFilter, setTypeFilter] = useState<FilterType>('all');
   const [userFilter, setUserFilter] = useState<UserFilterType>('all');
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
 
   // Генерируем события из всех источников
   const allEvents = useMemo((): CalendarEvent[] => {

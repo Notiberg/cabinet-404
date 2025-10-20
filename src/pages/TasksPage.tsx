@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
   PlusIcon, 
@@ -15,6 +15,10 @@ const TasksPage: React.FC = () => {
   const { tasks, users, currentUser, addTask, updateTask, deleteTask } = useAppStore();
   const [showAddForm, setShowAddForm] = useState(false);
   const [filter, setFilter] = useState<'all' | 'my' | 'overdue'>('all');
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
   
   const [newTask, setNewTask] = useState({
     title: '',
@@ -303,7 +307,8 @@ const TasksPage: React.FC = () => {
                     </label>
                     <input
                       type="date"
-                      className="w-full p-3 rounded-lg bg-white/10 border border-white/20 text-white"
+                      className="w-full p-2 rounded-lg bg-white/10 border border-white/20 text-white text-sm"
+                      style={{ maxWidth: '200px', fontSize: '12px' }}
                       value={newTask.dueDate}
                       onChange={(e) => setNewTask({ ...newTask, dueDate: e.target.value })}
                     />

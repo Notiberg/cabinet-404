@@ -1,10 +1,14 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAppStore } from '../store';
 
 const DocumentTrackingPage: React.FC = () => {
   const { documentTracking, currentUser, addDocumentTracking, updateDocumentTracking, deleteDocumentTracking } = useAppStore();
   const [showAddForm, setShowAddForm] = useState(false);
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
   
   const [newDocument, setNewDocument] = useState({
     factory: '',
