@@ -1,7 +1,7 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import { User, Task, MetalTracking, WorkClosure, DocumentTracking, CalendarEvent } from '../types';
-import { FirebaseService } from '../firebase/database';
+import { MockFirebaseService as FirebaseService } from '../firebase/api-service';
 
 interface AppState {
   // User management
@@ -133,7 +133,7 @@ export const useAppStore = create<AppState>()(
         set({ documentTracking });
       },
 
-      // Initialize Firebase subscriptions
+      // Initialize Firebase subscriptions (now using mock service)
       initializeFirebaseSubscriptions: () => {
         try {
           // Subscribe to tasks
@@ -156,118 +156,143 @@ export const useAppStore = create<AppState>()(
             get().setDocumentTracking(documents);
           });
 
+          // Mock service is always "connected"
           set({ isConnected: true });
         } catch (error) {
-          console.error('Failed to initialize Firebase subscriptions:', error);
+          console.error('Failed to initialize mock service subscriptions:', error);
           set({ isConnected: false });
         }
       },
 
-      addTask: (taskData) => {
+      addTask: async (taskData) => {
         const taskWithStatus = {
           ...taskData,
           status: checkOverdueStatus(taskData.dueDate),
         };
         
-        FirebaseService.addTask(taskWithStatus).catch((error) => {
+        try {
+          await FirebaseService.addTask(taskWithStatus);
+        } catch (error) {
           console.error('Failed to add task:', error);
-        });
+        }
       },
 
-      updateTask: (id, updates) => {
+      updateTask: async (id, updates) => {
         const updatesWithStatus = {
           ...updates,
           ...(updates.dueDate && { status: checkOverdueStatus(updates.dueDate) }),
         };
         
-        FirebaseService.updateTask(id, updatesWithStatus).catch((error) => {
+        try {
+          await FirebaseService.updateTask(id, updatesWithStatus);
+        } catch (error) {
           console.error('Failed to update task:', error);
-        });
+        }
       },
 
-      deleteTask: (id) => {
-        FirebaseService.deleteTask(id).catch((error) => {
+      deleteTask: async (id) => {
+        try {
+          await FirebaseService.deleteTask(id);
+        } catch (error) {
           console.error('Failed to delete task:', error);
-        });
+        }
       },
 
-      addMetalTracking: (metalData) => {
+      addMetalTracking: async (metalData) => {
         const metalWithStatus = {
           ...metalData,
           status: checkOverdueStatus(metalData.testEndDate),
         };
         
-        FirebaseService.addMetalTracking(metalWithStatus).catch((error) => {
+        try {
+          await FirebaseService.addMetalTracking(metalWithStatus);
+        } catch (error) {
           console.error('Failed to add metal tracking:', error);
-        });
+        }
       },
 
-      updateMetalTracking: (id, updates) => {
+      updateMetalTracking: async (id, updates) => {
         const updatesWithStatus = {
           ...updates,
           ...(updates.testEndDate && { status: checkOverdueStatus(updates.testEndDate) }),
         };
         
-        FirebaseService.updateMetalTracking(id, updatesWithStatus).catch((error) => {
+        try {
+          await FirebaseService.updateMetalTracking(id, updatesWithStatus);
+        } catch (error) {
           console.error('Failed to update metal tracking:', error);
-        });
+        }
       },
 
-      deleteMetalTracking: (id) => {
-        FirebaseService.deleteMetalTracking(id).catch((error) => {
+      deleteMetalTracking: async (id) => {
+        try {
+          await FirebaseService.deleteMetalTracking(id);
+        } catch (error) {
           console.error('Failed to delete metal tracking:', error);
-        });
+        }
       },
 
-      addWorkClosure: (workData) => {
+      addWorkClosure: async (workData) => {
         const workWithStatus = {
           ...workData,
           status: checkOverdueStatus(workData.endDate),
         };
         
-        FirebaseService.addWorkClosure(workWithStatus).catch((error) => {
+        try {
+          await FirebaseService.addWorkClosure(workWithStatus);
+        } catch (error) {
           console.error('Failed to add work closure:', error);
-        });
+        }
       },
 
-      updateWorkClosure: (id, updates) => {
+      updateWorkClosure: async (id, updates) => {
         const updatesWithStatus = {
           ...updates,
           ...(updates.endDate && { status: checkOverdueStatus(updates.endDate) }),
         };
         
-        FirebaseService.updateWorkClosure(id, updatesWithStatus).catch((error) => {
+        try {
+          await FirebaseService.updateWorkClosure(id, updatesWithStatus);
+        } catch (error) {
           console.error('Failed to update work closure:', error);
-        });
+        }
       },
 
-      deleteWorkClosure: (id) => {
-        FirebaseService.deleteWorkClosure(id).catch((error) => {
+      deleteWorkClosure: async (id) => {
+        try {
+          await FirebaseService.deleteWorkClosure(id);
+        } catch (error) {
           console.error('Failed to delete work closure:', error);
-        });
+        }
       },
 
-      addDocumentTracking: (documentData) => {
+      addDocumentTracking: async (documentData) => {
         const documentWithStatus = {
           ...documentData,
           status: 'working' as const,
         };
         
-        FirebaseService.addDocumentTracking(documentWithStatus).catch((error) => {
+        try {
+          await FirebaseService.addDocumentTracking(documentWithStatus);
+        } catch (error) {
           console.error('Failed to add document tracking:', error);
-        });
+        }
       },
 
-      updateDocumentTracking: (id, updates) => {
-        FirebaseService.updateDocumentTracking(id, updates).catch((error) => {
+      updateDocumentTracking: async (id, updates) => {
+        try {
+          await FirebaseService.updateDocumentTracking(id, updates);
+        } catch (error) {
           console.error('Failed to update document tracking:', error);
-        });
+        }
       },
 
-      deleteDocumentTracking: (id) => {
-        FirebaseService.deleteDocumentTracking(id).catch((error) => {
+      deleteDocumentTracking: async (id) => {
+        try {
+          await FirebaseService.deleteDocumentTracking(id);
+        } catch (error) {
           console.error('Failed to delete document tracking:', error);
-        });
+        }
       },
 
       updateCalendarEvents: () => {
