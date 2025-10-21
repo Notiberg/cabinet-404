@@ -13,7 +13,7 @@ import { useFirebase } from './hooks/useFirebase';
 
 function App() {
   // Initialize Firebase connection
-  const { isConnected } = useFirebase();
+  useFirebase();
 
   return (
     <Router>
