@@ -1,9 +1,17 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
+import { useAppStore } from '../store';
 
 const SimpleHomePage: React.FC = () => {
   const navigate = useNavigate();
+  const { tasks } = useAppStore();
+
+  // Calculate task statistics
+  const activeTasks = tasks.length;
+  const completedTasks = tasks.filter(task => task.status === 'completed').length;
+  const workingTasks = tasks.filter(task => task.status === 'working').length;
+  const overdueTasks = tasks.filter(task => task.status === 'overdue').length;
 
   const sections = [
     {
@@ -192,19 +200,19 @@ const SimpleHomePage: React.FC = () => {
             gap: '16px',
           }}>
             <div style={{ textAlign: 'center' }}>
-              <div style={{ fontSize: '1.5rem', fontWeight: 'bold', color: '#60A5FA' }}>0</div>
+              <div style={{ fontSize: '1.5rem', fontWeight: 'bold', color: '#60A5FA' }}>{activeTasks}</div>
               <div style={{ fontSize: '0.875rem', opacity: 0.7 }}>Активных задач</div>
             </div>
             <div style={{ textAlign: 'center' }}>
-              <div style={{ fontSize: '1.5rem', fontWeight: 'bold', color: '#34D399' }}>0</div>
+              <div style={{ fontSize: '1.5rem', fontWeight: 'bold', color: '#34D399' }}>{completedTasks}</div>
               <div style={{ fontSize: '0.875rem', opacity: 0.7 }}>Завершено</div>
             </div>
             <div style={{ textAlign: 'center' }}>
-              <div style={{ fontSize: '1.5rem', fontWeight: 'bold', color: '#FBBF24' }}>0</div>
+              <div style={{ fontSize: '1.5rem', fontWeight: 'bold', color: '#FBBF24' }}>{workingTasks}</div>
               <div style={{ fontSize: '0.875rem', opacity: 0.7 }}>В работе</div>
             </div>
             <div style={{ textAlign: 'center' }}>
-              <div style={{ fontSize: '1.5rem', fontWeight: 'bold', color: '#F87171' }}>0</div>
+              <div style={{ fontSize: '1.5rem', fontWeight: 'bold', color: '#F87171' }}>{overdueTasks}</div>
               <div style={{ fontSize: '0.875rem', opacity: 0.7 }}>Просрочено</div>
             </div>
           </div>

@@ -26,10 +26,58 @@ export class MockFirebaseService {
         return null; // No content for DELETE operations
       }
 
-      return await response.json();
+      const result = await response.json();
+      
+      // Save to localStorage as backup for all successful requests
+      if (!options.method || options.method === 'GET') {
+        // For GET requests, save the full result
+        this.saveToLocalStorage(endpoint, result);
+      } else {
+        // For other requests, reload and save the updated data
+        setTimeout(() => {
+          this.loadAndSaveData(endpoint.replace(/&id=.*/, ''));
+        }, 100);
+      }
+      
+      return result;
     } catch (error) {
       console.error('API call error:', error);
+      
+      // Fallback to localStorage for GET requests
+      if (!options.method || options.method === 'GET') {
+        return this.loadFromLocalStorage(endpoint);
+      }
+      
       throw error;
+    }
+  }
+
+  private static saveToLocalStorage(endpoint: string, data: any) {
+    try {
+      const key = `cabinet-404-${endpoint.replace('?type=', '')}`;
+      localStorage.setItem(key, JSON.stringify(data));
+    } catch (error) {
+      console.error('Failed to save to localStorage:', error);
+    }
+  }
+
+  private static loadFromLocalStorage(endpoint: string) {
+    try {
+      const key = `cabinet-404-${endpoint.replace('?type=', '')}`;
+      const data = localStorage.getItem(key);
+      return data ? JSON.parse(data) : [];
+    } catch (error) {
+      console.error('Failed to load from localStorage:', error);
+      return [];
+    }
+  }
+
+  private static async loadAndSaveData(endpoint: string) {
+    try {
+      const data = await this.apiCall(endpoint);
+      this.saveToLocalStorage(endpoint, data);
+    } catch (error) {
+      console.error('Failed to load and save data:', error);
     }
   }
 

@@ -1,39 +1,23 @@
-const fs = require('fs');
-const path = require('path');
-
-// Path to store data (Vercel provides /tmp directory)
-const DATA_FILE = '/tmp/cabinet-404-data.json';
-
-// Initialize data structure
-const defaultData = {
+// Global in-memory storage (persists during serverless function lifetime)
+let globalData = {
   tasks: [],
   metalTracking: [],
   workClosures: [],
-  documentTracking: []
+  documentTracking: [],
+  lastUpdate: Date.now()
 };
 
-// Load data from file or create default
+// Simple data persistence using global variable
 function loadData() {
-  try {
-    if (fs.existsSync(DATA_FILE)) {
-      const data = fs.readFileSync(DATA_FILE, 'utf8');
-      return JSON.parse(data);
-    }
-  } catch (error) {
-    console.error('Error loading data:', error);
-  }
-  return { ...defaultData };
+  return globalData;
 }
 
-// Save data to file
 function saveData(data) {
-  try {
-    fs.writeFileSync(DATA_FILE, JSON.stringify(data, null, 2));
-    return true;
-  } catch (error) {
-    console.error('Error saving data:', error);
-    return false;
-  }
+  globalData = {
+    ...data,
+    lastUpdate: Date.now()
+  };
+  return true;
 }
 
 // Helper function to generate IDs
