@@ -36,10 +36,11 @@ export interface MetalTracking {
 
 export interface WorkClosure {
   id: string;
-  factory: string;
-  diameter: string;
-  thickness: string;
-  melt: string;
+  factoryName: string;
+  contractNumber: string;
+  stageNumber: string;
+  tubesCount: number;
+  testType: 'full_complex' | 'periodic_control';
   startDate: Date;
   endDate: Date;
   status: 'working' | 'completed' | 'overdue';

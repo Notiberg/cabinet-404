@@ -8,6 +8,7 @@ import { ru } from 'date-fns/locale';
 const MetalTrackingPage: React.FC = () => {
   const { metalTracking, currentUser, addMetalTracking, updateMetalTracking, deleteMetalTracking } = useAppStore();
   const [showAddForm, setShowAddForm] = useState(false);
+  const [filter, setFilter] = useState<'all' | TestType>('all');
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -73,10 +74,16 @@ const MetalTrackingPage: React.FC = () => {
     }
   };
 
+  // Filter metal tracking based on selected filter
+  const filteredMetalTracking = metalTracking.filter(metal => {
+    if (filter === 'all') return true;
+    return metal.testType === filter;
+  });
+
   const containerStyle: React.CSSProperties = {
     minHeight: '100vh',
     padding: '16px',
-    paddingTop: '80px',
+    paddingTop: '100px',
     paddingBottom: '96px',
     maxWidth: '800px',
     margin: '0 auto',
@@ -149,10 +156,90 @@ const MetalTrackingPage: React.FC = () => {
           )}
         </div>
 
+        {/* Filter Buttons */}
+        <div style={{ 
+          display: 'flex', 
+          gap: '8px', 
+          marginBottom: '20px', 
+          flexWrap: 'wrap',
+          overflowX: 'auto',
+          paddingBottom: '8px'
+        }}>
+          <motion.button
+            style={{
+              ...buttonStyle,
+              padding: '8px 16px',
+              fontSize: '0.875rem',
+              background: filter === 'all' ? '#3b82f6' : 'rgba(255, 255, 255, 0.15)',
+              borderColor: filter === 'all' ? '#3b82f6' : 'rgba(255, 255, 255, 0.3)',
+            }}
+            whileTap={{ scale: 0.95 }}
+            onClick={() => setFilter('all')}
+          >
+            Все ({metalTracking.length})
+          </motion.button>
+          
+          <motion.button
+            style={{
+              ...buttonStyle,
+              padding: '8px 16px',
+              fontSize: '0.875rem',
+              background: filter === 'DP_tension' ? '#3b82f6' : 'rgba(255, 255, 255, 0.15)',
+              borderColor: filter === 'DP_tension' ? '#3b82f6' : 'rgba(255, 255, 255, 0.3)',
+            }}
+            whileTap={{ scale: 0.95 }}
+            onClick={() => setFilter('DP_tension')}
+          >
+            ДП и растяжение ({metalTracking.filter(m => m.testType === 'DP_tension').length})
+          </motion.button>
+          
+          <motion.button
+            style={{
+              ...buttonStyle,
+              padding: '8px 16px',
+              fontSize: '0.875rem',
+              background: filter === 'technological' ? '#3b82f6' : 'rgba(255, 255, 255, 0.15)',
+              borderColor: filter === 'technological' ? '#3b82f6' : 'rgba(255, 255, 255, 0.3)',
+            }}
+            whileTap={{ scale: 0.95 }}
+            onClick={() => setFilter('technological')}
+          >
+            Технологические ({metalTracking.filter(m => m.testType === 'technological').length})
+          </motion.button>
+          
+          <motion.button
+            style={{
+              ...buttonStyle,
+              padding: '8px 16px',
+              fontSize: '0.875rem',
+              background: filter === 'metallographic' ? '#3b82f6' : 'rgba(255, 255, 255, 0.15)',
+              borderColor: filter === 'metallographic' ? '#3b82f6' : 'rgba(255, 255, 255, 0.3)',
+            }}
+            whileTap={{ scale: 0.95 }}
+            onClick={() => setFilter('metallographic')}
+          >
+            Металлография ({metalTracking.filter(m => m.testType === 'metallographic').length})
+          </motion.button>
+          
+          <motion.button
+            style={{
+              ...buttonStyle,
+              padding: '8px 16px',
+              fontSize: '0.875rem',
+              background: filter === 'experimental_plant' ? '#3b82f6' : 'rgba(255, 255, 255, 0.15)',
+              borderColor: filter === 'experimental_plant' ? '#3b82f6' : 'rgba(255, 255, 255, 0.3)',
+            }}
+            whileTap={{ scale: 0.95 }}
+            onClick={() => setFilter('experimental_plant')}
+          >
+            Опытный завод ({metalTracking.filter(m => m.testType === 'experimental_plant').length})
+          </motion.button>
+        </div>
+
         {/* Metal Tracking List */}
         <div>
           <AnimatePresence>
-            {metalTracking.map((metal, index) => {
+            {filteredMetalTracking.map((metal, index) => {
               const statusStyle = getStatusColor(metal.status);
               
               return (
@@ -252,10 +339,17 @@ const MetalTrackingPage: React.FC = () => {
             })}
           </AnimatePresence>
 
-          {metalTracking.length === 0 && (
+          {filteredMetalTracking.length === 0 && (
             <div style={{ textAlign: 'center', padding: '48px 0', color: 'rgba(255, 255, 255, 0.5)' }}>
-              <div style={{ fontSize: '1.125rem', marginBottom: '8px' }}>Записей не найдено</div>
-              <p style={{ fontSize: '0.875rem', margin: 0 }}>Добавьте первую запись об испытании металла</p>
+              <div style={{ fontSize: '1.125rem', marginBottom: '8px' }}>
+                {metalTracking.length === 0 ? 'Записей не найдено' : 'Нет записей для выбранного фильтра'}
+              </div>
+              <p style={{ fontSize: '0.875rem', margin: 0 }}>
+                {metalTracking.length === 0 
+                  ? 'Добавьте первую запись об испытании металла'
+                  : 'Попробуйте выбрать другой тип испытания или добавьте новую запись'
+                }
+              </p>
             </div>
           )}
         </div>

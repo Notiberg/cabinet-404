@@ -13,31 +13,34 @@ const WorkClosurePage: React.FC = () => {
   }, []);
   
   const [newWork, setNewWork] = useState({
-    factory: '',
-    diameter: '',
-    thickness: '',
-    melt: '',
+    factoryName: '',
+    contractNumber: '',
+    stageNumber: '',
+    tubesCount: '',
+    testType: 'full_complex' as 'full_complex' | 'periodic_control',
     startDate: '',
     endDate: '',
   });
 
   const handleAddWork = () => {
-    if (!newWork.factory || !newWork.diameter || !newWork.thickness || !newWork.melt || !newWork.startDate || !newWork.endDate) return;
+    if (!newWork.factoryName || !newWork.contractNumber || !newWork.stageNumber || !newWork.tubesCount || !newWork.startDate || !newWork.endDate) return;
 
     addWorkClosure({
-      factory: newWork.factory,
-      diameter: newWork.diameter,
-      thickness: newWork.thickness,
-      melt: newWork.melt,
+      factoryName: newWork.factoryName,
+      contractNumber: newWork.contractNumber,
+      stageNumber: newWork.stageNumber,
+      tubesCount: parseInt(newWork.tubesCount),
+      testType: newWork.testType,
       startDate: new Date(newWork.startDate),
       endDate: new Date(newWork.endDate),
     });
 
     setNewWork({
-      factory: '',
-      diameter: '',
-      thickness: '',
-      melt: '',
+      factoryName: '',
+      contractNumber: '',
+      stageNumber: '',
+      tubesCount: '',
+      testType: 'full_complex',
       startDate: '',
       endDate: '',
     });
@@ -60,10 +63,17 @@ const WorkClosurePage: React.FC = () => {
     }
   };
 
+  const getTestTypeLabel = (testType: 'full_complex' | 'periodic_control') => {
+    switch (testType) {
+      case 'full_complex': return 'Полный комплекс испытаний';
+      case 'periodic_control': return 'Периодический контроль';
+    }
+  };
+
   const containerStyle: React.CSSProperties = {
     minHeight: '100vh',
     padding: '16px',
-    paddingTop: '80px',
+    paddingTop: '100px',
     paddingBottom: '96px',
     maxWidth: '800px',
     margin: '0 auto',
@@ -154,13 +164,13 @@ const WorkClosurePage: React.FC = () => {
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '16px' }}>
                     <div style={{ flex: 1 }}>
                       <h3 style={{ fontSize: '1.125rem', fontWeight: '600', margin: '0 0 8px 0' }}>
-                        {work.factory}
+                        {work.factoryName}
                       </h3>
                       <div style={{ fontSize: '0.875rem', color: 'rgba(255, 255, 255, 0.7)', marginBottom: '8px' }}>
-                        Типоразмер: ⌀{work.diameter}мм, толщина {work.thickness}мм
+                        Договор: {work.contractNumber} | Этап: {work.stageNumber}
                       </div>
                       <div style={{ fontSize: '0.875rem', color: 'rgba(255, 255, 255, 0.7)' }}>
-                        Плавка: {work.melt}
+                        Количество труб: {work.tubesCount} шт.
                       </div>
                     </div>
                     
@@ -193,6 +203,15 @@ const WorkClosurePage: React.FC = () => {
                       </div>
                       <div style={{ fontSize: '0.875rem' }}>
                         {format(work.endDate, 'dd.MM.yyyy', { locale: ru })}
+                      </div>
+                    </div>
+                    
+                    <div>
+                      <div style={{ fontSize: '0.75rem', color: 'rgba(255, 255, 255, 0.5)', marginBottom: '4px' }}>
+                        Тип испытаний
+                      </div>
+                      <div style={{ fontSize: '0.875rem' }}>
+                        {getTestTypeLabel(work.testType)}
                       </div>
                     </div>
                     
@@ -294,54 +313,68 @@ const WorkClosurePage: React.FC = () => {
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', paddingBottom: '120px' }}>
                   <div>
                     <label style={{ display: 'block', fontSize: '0.875rem', color: 'rgba(255, 255, 255, 0.7)', marginBottom: '8px' }}>
-                      Завод
+                      Название завода
                     </label>
                     <input
                       type="text"
                       style={inputStyle}
                       placeholder="Введите название завода"
-                      value={newWork.factory}
-                      onChange={(e) => setNewWork({ ...newWork, factory: e.target.value })}
+                      value={newWork.factoryName}
+                      onChange={(e) => setNewWork({ ...newWork, factoryName: e.target.value })}
                     />
                   </div>
 
                   <div>
                     <label style={{ display: 'block', fontSize: '0.875rem', color: 'rgba(255, 255, 255, 0.7)', marginBottom: '8px' }}>
-                      Диаметр (мм)
-                    </label>
-                    <input
-                      type="number"
-                      style={inputStyle}
-                      placeholder="Диаметр"
-                      value={newWork.diameter}
-                      onChange={(e) => setNewWork({ ...newWork, diameter: e.target.value })}
-                    />
-                  </div>
-
-                  <div>
-                    <label style={{ display: 'block', fontSize: '0.875rem', color: 'rgba(255, 255, 255, 0.7)', marginBottom: '8px' }}>
-                      Толщина стенки (мм)
-                    </label>
-                    <input
-                      type="number"
-                      style={inputStyle}
-                      placeholder="Толщина"
-                      value={newWork.thickness}
-                      onChange={(e) => setNewWork({ ...newWork, thickness: e.target.value })}
-                    />
-                  </div>
-
-                  <div>
-                    <label style={{ display: 'block', fontSize: '0.875rem', color: 'rgba(255, 255, 255, 0.7)', marginBottom: '8px' }}>
-                      Плавка
+                      Номер договора
                     </label>
                     <input
                       type="text"
                       style={inputStyle}
-                      placeholder="Номер плавки"
-                      value={newWork.melt}
-                      onChange={(e) => setNewWork({ ...newWork, melt: e.target.value })}
+                      placeholder="Введите номер договора"
+                      value={newWork.contractNumber}
+                      onChange={(e) => setNewWork({ ...newWork, contractNumber: e.target.value })}
                     />
+                  </div>
+
+                  <div>
+                    <label style={{ display: 'block', fontSize: '0.875rem', color: 'rgba(255, 255, 255, 0.7)', marginBottom: '8px' }}>
+                      Номер этапа
+                    </label>
+                    <input
+                      type="text"
+                      style={inputStyle}
+                      placeholder="Введите номер этапа"
+                      value={newWork.stageNumber}
+                      onChange={(e) => setNewWork({ ...newWork, stageNumber: e.target.value })}
+                    />
+                  </div>
+
+                  <div>
+                    <label style={{ display: 'block', fontSize: '0.875rem', color: 'rgba(255, 255, 255, 0.7)', marginBottom: '8px' }}>
+                      Количество труб
+                    </label>
+                    <input
+                      type="number"
+                      style={inputStyle}
+                      placeholder="Введите количество труб"
+                      value={newWork.tubesCount}
+                      onChange={(e) => setNewWork({ ...newWork, tubesCount: e.target.value })}
+                    />
+                  </div>
+
+                  <div>
+                    <label style={{ display: 'block', fontSize: '0.875rem', color: 'rgba(255, 255, 255, 0.7)', marginBottom: '8px' }}>
+                      Тип испытаний
+                    </label>
+                    <select
+                      style={inputStyle}
+                      value={newWork.testType}
+                      onChange={(e) => setNewWork({ ...newWork, testType: e.target.value as 'full_complex' | 'periodic_control' })}
+                    >
+                      <option value="full_complex">Полный комплекс испытаний</option>
+                      <option value="periodic_control">Периодический контроль</option>
+                    </select>
                   </div>
 
                   <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
@@ -393,7 +426,7 @@ const WorkClosurePage: React.FC = () => {
                     }}
                     whileTap={{ scale: 0.95 }}
                     onClick={handleAddWork}
-                    disabled={!newWork.factory || !newWork.diameter || !newWork.thickness || !newWork.melt || !newWork.startDate || !newWork.endDate}
+                    disabled={!newWork.factoryName || !newWork.contractNumber || !newWork.stageNumber || !newWork.tubesCount || !newWork.startDate || !newWork.endDate}
                   >
                     Создать
                   </motion.button>

@@ -7,13 +7,33 @@ import {
   CalendarDaysIcon 
 } from '@heroicons/react/24/outline';
 import { useNavigate } from 'react-router-dom';
+import { useAppStore } from '../store';
 
 const HomePage: React.FC = () => {
   const navigate = useNavigate();
+  const { tasks, metalTracking, workClosures, documentTracking } = useAppStore();
 
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
+
+  // Calculate statistics
+  const activeTasks = tasks.filter(task => task.status === 'working').length;
+  const completedTasks = tasks.filter(task => task.status === 'completed').length;
+  const overdueTasks = tasks.filter(task => task.status === 'overdue').length;
+  
+  const activeMetals = metalTracking.filter(metal => metal.status === 'working').length;
+  const activeWorks = workClosures.filter(work => work.status === 'working').length;
+  const activeDocs = documentTracking.filter(doc => doc.status === 'working').length;
+  
+  const totalActive = activeTasks + activeMetals + activeWorks + activeDocs;
+  const totalCompleted = completedTasks + 
+    metalTracking.filter(metal => metal.status === 'completed').length +
+    workClosures.filter(work => work.status === 'completed').length +
+    documentTracking.filter(doc => doc.status === 'completed').length;
+  const totalOverdue = overdueTasks +
+    metalTracking.filter(metal => metal.status === 'overdue').length +
+    workClosures.filter(work => work.status === 'overdue').length;
 
   const sections = [
     {
@@ -159,19 +179,19 @@ const HomePage: React.FC = () => {
           
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             <div className="text-center">
-              <div className="text-2xl font-bold text-blue-300">0</div>
+              <div className="text-2xl font-bold text-blue-300">{activeTasks}</div>
               <div className="text-sm text-white/70">Активных задач</div>
             </div>
             <div className="text-center">
-              <div className="text-2xl font-bold text-green-300">0</div>
+              <div className="text-2xl font-bold text-green-300">{totalCompleted}</div>
               <div className="text-sm text-white/70">Завершено</div>
             </div>
             <div className="text-center">
-              <div className="text-2xl font-bold text-yellow-300">0</div>
+              <div className="text-2xl font-bold text-yellow-300">{totalActive}</div>
               <div className="text-sm text-white/70">В работе</div>
             </div>
             <div className="text-center">
-              <div className="text-2xl font-bold text-red-300">0</div>
+              <div className="text-2xl font-bold text-red-300">{totalOverdue}</div>
               <div className="text-sm text-white/70">Просрочено</div>
             </div>
           </div>

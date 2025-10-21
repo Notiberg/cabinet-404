@@ -1,6 +1,7 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import { User, Task, MetalTracking, WorkClosure, DocumentTracking, CalendarEvent } from '../types';
+import { FirebaseService } from '../firebase/database';
 
 interface AppState {
   // User management
@@ -22,24 +23,33 @@ interface AppState {
   // Calendar events
   calendarEvents: CalendarEvent[];
   
+  // Firebase subscriptions
+  isConnected: boolean;
+  
   // Actions
   setCurrentUser: (user: User | null) => void;
+  initializeFirebaseSubscriptions: () => void;
+  setTasks: (tasks: Task[]) => void;
+  setMetalTracking: (metals: MetalTracking[]) => void;
+  setWorkClosures: (works: WorkClosure[]) => void;
+  setDocumentTracking: (documents: DocumentTracking[]) => void;
+  
   addTask: (task: Omit<Task, 'id' | 'createdAt' | 'updatedAt' | 'status'>) => void;
   updateTask: (id: string, updates: Partial<Task>) => void;
   deleteTask: (id: string) => void;
-  
+
   addMetalTracking: (metal: Omit<MetalTracking, 'id' | 'createdAt' | 'updatedAt' | 'status'>) => void;
   updateMetalTracking: (id: string, updates: Partial<MetalTracking>) => void;
   deleteMetalTracking: (id: string) => void;
-  
+
   addWorkClosure: (work: Omit<WorkClosure, 'id' | 'createdAt' | 'updatedAt' | 'status'>) => void;
   updateWorkClosure: (id: string, updates: Partial<WorkClosure>) => void;
   deleteWorkClosure: (id: string) => void;
-  
+
   addDocumentTracking: (document: Omit<DocumentTracking, 'id' | 'createdAt' | 'updatedAt' | 'status'>) => void;
   updateDocumentTracking: (id: string, updates: Partial<DocumentTracking>) => void;
   deleteDocumentTracking: (id: string) => void;
-  
+
   updateCalendarEvents: () => void;
 }
 
@@ -99,168 +109,165 @@ export const useAppStore = create<AppState>()(
       workClosures: [],
       documentTracking: [],
       calendarEvents: [],
+      isConnected: false,
 
       setCurrentUser: (user) => set({ currentUser: user }),
 
+      // Firebase data setters
+      setTasks: (tasks) => {
+        set({ tasks });
+        get().updateCalendarEvents();
+      },
+
+      setMetalTracking: (metalTracking) => {
+        set({ metalTracking });
+        get().updateCalendarEvents();
+      },
+
+      setWorkClosures: (workClosures) => {
+        set({ workClosures });
+        get().updateCalendarEvents();
+      },
+
+      setDocumentTracking: (documentTracking) => {
+        set({ documentTracking });
+      },
+
+      // Initialize Firebase subscriptions
+      initializeFirebaseSubscriptions: () => {
+        try {
+          // Subscribe to tasks
+          FirebaseService.subscribeToTasks((tasks) => {
+            get().setTasks(tasks);
+          });
+
+          // Subscribe to metal tracking
+          FirebaseService.subscribeToMetalTracking((metals) => {
+            get().setMetalTracking(metals);
+          });
+
+          // Subscribe to work closures
+          FirebaseService.subscribeToWorkClosures((works) => {
+            get().setWorkClosures(works);
+          });
+
+          // Subscribe to document tracking
+          FirebaseService.subscribeToDocumentTracking((documents) => {
+            get().setDocumentTracking(documents);
+          });
+
+          set({ isConnected: true });
+        } catch (error) {
+          console.error('Failed to initialize Firebase subscriptions:', error);
+          set({ isConnected: false });
+        }
+      },
+
       addTask: (taskData) => {
-        const now = new Date();
-        const task: Task = {
+        const taskWithStatus = {
           ...taskData,
-          id: generateId(),
-          createdAt: now,
-          updatedAt: now,
           status: checkOverdueStatus(taskData.dueDate),
         };
         
-        set((state) => ({ 
-          tasks: [...state.tasks, task] 
-        }));
-        
-        get().updateCalendarEvents();
+        FirebaseService.addTask(taskWithStatus).catch((error) => {
+          console.error('Failed to add task:', error);
+        });
       },
 
       updateTask: (id, updates) => {
-        set((state) => ({
-          tasks: state.tasks.map((task) =>
-            task.id === id
-              ? { 
-                  ...task, 
-                  ...updates, 
-                  updatedAt: new Date(),
-                  status: updates.dueDate ? checkOverdueStatus(updates.dueDate) : task.status
-                }
-              : task
-          ),
-        }));
+        const updatesWithStatus = {
+          ...updates,
+          ...(updates.dueDate && { status: checkOverdueStatus(updates.dueDate) }),
+        };
         
-        get().updateCalendarEvents();
+        FirebaseService.updateTask(id, updatesWithStatus).catch((error) => {
+          console.error('Failed to update task:', error);
+        });
       },
 
       deleteTask: (id) => {
-        set((state) => ({
-          tasks: state.tasks.filter((task) => task.id !== id),
-        }));
-        
-        get().updateCalendarEvents();
+        FirebaseService.deleteTask(id).catch((error) => {
+          console.error('Failed to delete task:', error);
+        });
       },
 
       addMetalTracking: (metalData) => {
-        const now = new Date();
-        const metal: MetalTracking = {
+        const metalWithStatus = {
           ...metalData,
-          id: generateId(),
-          createdAt: now,
-          updatedAt: now,
           status: checkOverdueStatus(metalData.testEndDate),
         };
         
-        set((state) => ({ 
-          metalTracking: [...state.metalTracking, metal] 
-        }));
-        
-        get().updateCalendarEvents();
+        FirebaseService.addMetalTracking(metalWithStatus).catch((error) => {
+          console.error('Failed to add metal tracking:', error);
+        });
       },
 
       updateMetalTracking: (id, updates) => {
-        set((state) => ({
-          metalTracking: state.metalTracking.map((metal) =>
-            metal.id === id
-              ? { 
-                  ...metal, 
-                  ...updates, 
-                  updatedAt: new Date(),
-                  status: updates.testEndDate ? checkOverdueStatus(updates.testEndDate) : metal.status
-                }
-              : metal
-          ),
-        }));
+        const updatesWithStatus = {
+          ...updates,
+          ...(updates.testEndDate && { status: checkOverdueStatus(updates.testEndDate) }),
+        };
         
-        get().updateCalendarEvents();
+        FirebaseService.updateMetalTracking(id, updatesWithStatus).catch((error) => {
+          console.error('Failed to update metal tracking:', error);
+        });
       },
 
       deleteMetalTracking: (id) => {
-        set((state) => ({
-          metalTracking: state.metalTracking.filter((metal) => metal.id !== id),
-        }));
-        
-        get().updateCalendarEvents();
+        FirebaseService.deleteMetalTracking(id).catch((error) => {
+          console.error('Failed to delete metal tracking:', error);
+        });
       },
 
       addWorkClosure: (workData) => {
-        const now = new Date();
-        const work: WorkClosure = {
+        const workWithStatus = {
           ...workData,
-          id: generateId(),
-          createdAt: now,
-          updatedAt: now,
           status: checkOverdueStatus(workData.endDate),
         };
         
-        set((state) => ({ 
-          workClosures: [...state.workClosures, work] 
-        }));
-        
-        get().updateCalendarEvents();
+        FirebaseService.addWorkClosure(workWithStatus).catch((error) => {
+          console.error('Failed to add work closure:', error);
+        });
       },
 
       updateWorkClosure: (id, updates) => {
-        set((state) => ({
-          workClosures: state.workClosures.map((work) =>
-            work.id === id
-              ? { 
-                  ...work, 
-                  ...updates, 
-                  updatedAt: new Date(),
-                  status: updates.endDate ? checkOverdueStatus(updates.endDate) : work.status
-                }
-              : work
-          ),
-        }));
+        const updatesWithStatus = {
+          ...updates,
+          ...(updates.endDate && { status: checkOverdueStatus(updates.endDate) }),
+        };
         
-        get().updateCalendarEvents();
+        FirebaseService.updateWorkClosure(id, updatesWithStatus).catch((error) => {
+          console.error('Failed to update work closure:', error);
+        });
       },
 
       deleteWorkClosure: (id) => {
-        set((state) => ({
-          workClosures: state.workClosures.filter((work) => work.id !== id),
-        }));
-        
-        get().updateCalendarEvents();
+        FirebaseService.deleteWorkClosure(id).catch((error) => {
+          console.error('Failed to delete work closure:', error);
+        });
       },
 
       addDocumentTracking: (documentData) => {
-        const now = new Date();
-        const document: DocumentTracking = {
+        const documentWithStatus = {
           ...documentData,
-          id: generateId(),
-          createdAt: now,
-          updatedAt: now,
-          status: 'working',
+          status: 'working' as const,
         };
         
-        set((state) => ({ 
-          documentTracking: [...state.documentTracking, document] 
-        }));
+        FirebaseService.addDocumentTracking(documentWithStatus).catch((error) => {
+          console.error('Failed to add document tracking:', error);
+        });
       },
 
       updateDocumentTracking: (id, updates) => {
-        set((state) => ({
-          documentTracking: state.documentTracking.map((document) =>
-            document.id === id
-              ? { 
-                  ...document, 
-                  ...updates, 
-                  updatedAt: new Date(),
-                }
-              : document
-          ),
-        }));
+        FirebaseService.updateDocumentTracking(id, updates).catch((error) => {
+          console.error('Failed to update document tracking:', error);
+        });
       },
 
       deleteDocumentTracking: (id) => {
-        set((state) => ({
-          documentTracking: state.documentTracking.filter((document) => document.id !== id),
-        }));
+        FirebaseService.deleteDocumentTracking(id).catch((error) => {
+          console.error('Failed to delete document tracking:', error);
+        });
       },
 
       updateCalendarEvents: () => {

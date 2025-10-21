@@ -58,7 +58,7 @@ const CalendarPage: React.FC = () => {
     workClosures.forEach(closure => {
       events.push({
         id: `closure-${closure.id}`,
-        title: `Закрытие: ${closure.factory}`,
+        title: `Закрытие: ${closure.factoryName}`,
         date: closure.endDate,
         type: 'closure',
         status: closure.status,
@@ -118,7 +118,7 @@ const CalendarPage: React.FC = () => {
   const containerStyle: React.CSSProperties = {
     minHeight: '100vh',
     padding: '16px',
-    paddingTop: '64px',
+    paddingTop: '100px',
     paddingBottom: '96px',
     maxWidth: '800px',
     margin: '0 auto',

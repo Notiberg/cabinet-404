@@ -55,7 +55,7 @@ const DocumentTrackingPage: React.FC = () => {
   const containerStyle: React.CSSProperties = {
     minHeight: '100vh',
     padding: '16px',
-    paddingTop: '80px',
+    paddingTop: '100px',
     paddingBottom: '96px',
     maxWidth: '800px',
     margin: '0 auto',
