@@ -1,10 +1,40 @@
-// Simple in-memory storage for shared data
-let sharedData = {
+const fs = require('fs');
+const path = require('path');
+
+// Path to store data (Vercel provides /tmp directory)
+const DATA_FILE = '/tmp/cabinet-404-data.json';
+
+// Initialize data structure
+const defaultData = {
   tasks: [],
   metalTracking: [],
   workClosures: [],
   documentTracking: []
 };
+
+// Load data from file or create default
+function loadData() {
+  try {
+    if (fs.existsSync(DATA_FILE)) {
+      const data = fs.readFileSync(DATA_FILE, 'utf8');
+      return JSON.parse(data);
+    }
+  } catch (error) {
+    console.error('Error loading data:', error);
+  }
+  return { ...defaultData };
+}
+
+// Save data to file
+function saveData(data) {
+  try {
+    fs.writeFileSync(DATA_FILE, JSON.stringify(data, null, 2));
+    return true;
+  } catch (error) {
+    console.error('Error saving data:', error);
+    return false;
+  }
+}
 
 // Helper function to generate IDs
 function generateId() {
@@ -30,6 +60,9 @@ module.exports = function handler(req, res) {
     return res.status(400).json({ error: 'Invalid data type' });
   }
 
+  // Load current data
+  const sharedData = loadData();
+
   try {
     switch (method) {
       case 'GET':
@@ -50,7 +83,13 @@ module.exports = function handler(req, res) {
         }
         
         sharedData[type].push(newItem);
-        return res.status(201).json(newItem);
+        
+        // Save updated data
+        if (saveData(sharedData)) {
+          return res.status(201).json(newItem);
+        } else {
+          return res.status(500).json({ error: 'Failed to save data' });
+        }
 
       case 'PUT':
         // Update existing item
@@ -69,7 +108,12 @@ module.exports = function handler(req, res) {
           updatedAt: new Date().toISOString()
         };
 
-        return res.status(200).json(sharedData[type][itemIndex]);
+        // Save updated data
+        if (saveData(sharedData)) {
+          return res.status(200).json(sharedData[type][itemIndex]);
+        } else {
+          return res.status(500).json({ error: 'Failed to save data' });
+        }
 
       case 'DELETE':
         // Delete item
@@ -83,7 +127,13 @@ module.exports = function handler(req, res) {
         }
 
         sharedData[type].splice(deleteIndex, 1);
-        return res.status(204).end();
+        
+        // Save updated data
+        if (saveData(sharedData)) {
+          return res.status(204).end();
+        } else {
+          return res.status(500).json({ error: 'Failed to save data' });
+        }
 
       default:
         res.setHeader('Allow', ['GET', 'POST', 'PUT', 'DELETE']);

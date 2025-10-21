@@ -64,11 +64,17 @@ export class MockFirebaseService {
     // Load initial data
     this.loadTasks().then(callback).catch(console.error);
     
+    // Start polling for updates every 3 seconds
+    const pollInterval = setInterval(() => {
+      this.loadTasks().then(callback).catch(console.error);
+    }, 3000);
+    
     return () => {
       const index = this.taskSubscribers.indexOf(callback);
       if (index > -1) {
         this.taskSubscribers.splice(index, 1);
       }
+      clearInterval(pollInterval);
     };
   }
 
@@ -129,11 +135,17 @@ export class MockFirebaseService {
     
     this.loadMetalTracking().then(callback).catch(console.error);
     
+    // Start polling for updates every 3 seconds
+    const pollInterval = setInterval(() => {
+      this.loadMetalTracking().then(callback).catch(console.error);
+    }, 3000);
+    
     return () => {
       const index = this.metalSubscribers.indexOf(callback);
       if (index > -1) {
         this.metalSubscribers.splice(index, 1);
       }
+      clearInterval(pollInterval);
     };
   }
 
@@ -194,11 +206,17 @@ export class MockFirebaseService {
     
     this.loadWorkClosures().then(callback).catch(console.error);
     
+    // Start polling for updates every 3 seconds
+    const pollInterval = setInterval(() => {
+      this.loadWorkClosures().then(callback).catch(console.error);
+    }, 3000);
+    
     return () => {
       const index = this.workSubscribers.indexOf(callback);
       if (index > -1) {
         this.workSubscribers.splice(index, 1);
       }
+      clearInterval(pollInterval);
     };
   }
 
@@ -260,11 +278,17 @@ export class MockFirebaseService {
     
     this.loadDocumentTracking().then(callback).catch(console.error);
     
+    // Start polling for updates every 3 seconds
+    const pollInterval = setInterval(() => {
+      this.loadDocumentTracking().then(callback).catch(console.error);
+    }, 3000);
+    
     return () => {
       const index = this.documentSubscribers.indexOf(callback);
       if (index > -1) {
         this.documentSubscribers.splice(index, 1);
       }
+      clearInterval(pollInterval);
     };
   }
 
