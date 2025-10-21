@@ -1,7 +1,7 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import { User, Task, MetalTracking, WorkClosure, DocumentTracking, CalendarEvent } from '../types';
-import { MockFirebaseService as FirebaseService } from '../firebase/api-service';
+import { MockFirebaseService as FirebaseService } from '../firebase/mock-database';
 
 interface AppState {
   // User management
