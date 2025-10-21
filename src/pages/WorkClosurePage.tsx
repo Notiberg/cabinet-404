@@ -377,29 +377,28 @@ const WorkClosurePage: React.FC = () => {
                     </select>
                   </div>
 
-                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
-                    <div>
-                      <label style={{ display: 'block', fontSize: '0.875rem', color: 'rgba(255, 255, 255, 0.7)', marginBottom: '8px' }}>
-                        Дата начала работ
-                      </label>
-                      <input
-                        type="date"
-                        style={inputStyle}
-                        value={newWork.startDate}
-                        onChange={(e) => setNewWork({ ...newWork, startDate: e.target.value })}
-                      />
-                    </div>
-                    <div>
-                      <label style={{ display: 'block', fontSize: '0.875rem', color: 'rgba(255, 255, 255, 0.7)', marginBottom: '8px' }}>
-                        Дата окончания работ
-                      </label>
-                      <input
-                        type="date"
-                        style={inputStyle}
-                        value={newWork.endDate}
-                        onChange={(e) => setNewWork({ ...newWork, endDate: e.target.value })}
-                      />
-                    </div>
+                  <div>
+                    <label style={{ display: 'block', fontSize: '0.875rem', color: 'rgba(255, 255, 255, 0.7)', marginBottom: '8px' }}>
+                      Дата начала работ
+                    </label>
+                    <input
+                      type="date"
+                      style={inputStyle}
+                      value={newWork.startDate}
+                      onChange={(e) => setNewWork({ ...newWork, startDate: e.target.value })}
+                    />
+                  </div>
+
+                  <div>
+                    <label style={{ display: 'block', fontSize: '0.875rem', color: 'rgba(255, 255, 255, 0.7)', marginBottom: '8px' }}>
+                      Дата окончания работ
+                    </label>
+                    <input
+                      type="date"
+                      style={inputStyle}
+                      value={newWork.endDate}
+                      onChange={(e) => setNewWork({ ...newWork, endDate: e.target.value })}
+                    />
                   </div>
 
                   <div style={{ 
