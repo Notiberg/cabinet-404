@@ -3,6 +3,10 @@ import { Task, MetalTracking, WorkClosure, DocumentTracking } from '../types';
 // API service for shared data across all users
 export class MockFirebaseService {
   private static readonly API_BASE = '/api/data';
+  
+  // Global polling interval
+  private static globalPollInterval: NodeJS.Timeout | null = null;
+  private static isPolling = false;
 
   private static async apiCall(endpoint: string, options: RequestInit = {}) {
     try {
@@ -29,14 +33,69 @@ export class MockFirebaseService {
     }
   }
 
+  // Global polling management
+  private static startGlobalPolling() {
+    if (this.isPolling) return;
+    
+    this.isPolling = true;
+    this.globalPollInterval = setInterval(() => {
+      this.pollAllData();
+    }, 3000);
+  }
+
+  private static checkAndStopPolling() {
+    const hasSubscribers = 
+      this.taskSubscribers.length > 0 ||
+      this.metalSubscribers.length > 0 ||
+      this.workSubscribers.length > 0 ||
+      this.documentSubscribers.length > 0;
+
+    if (!hasSubscribers && this.isPolling) {
+      if (this.globalPollInterval) {
+        clearInterval(this.globalPollInterval);
+        this.globalPollInterval = null;
+      }
+      this.isPolling = false;
+    }
+  }
+
+  private static async pollAllData() {
+    try {
+      // Poll tasks
+      if (this.taskSubscribers.length > 0) {
+        const tasks = await this.loadTasks();
+        this.taskSubscribers.forEach(callback => callback(tasks));
+      }
+
+      // Poll metal tracking
+      if (this.metalSubscribers.length > 0) {
+        const metals = await this.loadMetalTracking();
+        this.metalSubscribers.forEach(callback => callback(metals));
+      }
+
+      // Poll work closures
+      if (this.workSubscribers.length > 0) {
+        const works = await this.loadWorkClosures();
+        this.workSubscribers.forEach(callback => callback(works));
+      }
+
+      // Poll document tracking
+      if (this.documentSubscribers.length > 0) {
+        const documents = await this.loadDocumentTracking();
+        this.documentSubscribers.forEach(callback => callback(documents));
+      }
+    } catch (error) {
+      console.error('Polling error:', error);
+    }
+  }
+
   // Tasks
   static async addTask(task: Omit<Task, 'id' | 'createdAt' | 'updatedAt'>) {
     const result = await this.apiCall('?type=tasks', {
       method: 'POST',
       body: JSON.stringify(task),
     });
-    this.notifyTaskSubscribers();
-    return result;
+        return result;
   }
 
   static async updateTask(id: string, updates: Partial<Task>) {
@@ -44,16 +103,14 @@ export class MockFirebaseService {
       method: 'PUT',
       body: JSON.stringify(updates),
     });
-    this.notifyTaskSubscribers();
-    return result;
+        return result;
   }
 
   static async deleteTask(id: string) {
     const result = await this.apiCall(`?type=tasks&id=${id}`, {
       method: 'DELETE',
     });
-    this.notifyTaskSubscribers();
-    return result;
+        return result;
   }
 
   private static taskSubscribers: ((tasks: Task[]) => void)[] = [];
@@ -64,17 +121,16 @@ export class MockFirebaseService {
     // Load initial data
     this.loadTasks().then(callback).catch(console.error);
     
-    // Start polling for updates every 3 seconds
-    const pollInterval = setInterval(() => {
-      this.loadTasks().then(callback).catch(console.error);
-    }, 3000);
+    // Start global polling if not already running
+    this.startGlobalPolling();
     
     return () => {
       const index = this.taskSubscribers.indexOf(callback);
       if (index > -1) {
         this.taskSubscribers.splice(index, 1);
       }
-      clearInterval(pollInterval);
+      // Stop polling if no more subscribers
+      this.checkAndStopPolling();
     };
   }
 
@@ -107,8 +163,7 @@ export class MockFirebaseService {
       method: 'POST',
       body: JSON.stringify(metal),
     });
-    this.notifyMetalSubscribers();
-    return result;
+        return result;
   }
 
   static async updateMetalTracking(id: string, updates: Partial<MetalTracking>) {
@@ -116,16 +171,14 @@ export class MockFirebaseService {
       method: 'PUT',
       body: JSON.stringify(updates),
     });
-    this.notifyMetalSubscribers();
-    return result;
+        return result;
   }
 
   static async deleteMetalTracking(id: string) {
     const result = await this.apiCall(`?type=metalTracking&id=${id}`, {
       method: 'DELETE',
     });
-    this.notifyMetalSubscribers();
-    return result;
+        return result;
   }
 
   private static metalSubscribers: ((metals: MetalTracking[]) => void)[] = [];
@@ -135,17 +188,16 @@ export class MockFirebaseService {
     
     this.loadMetalTracking().then(callback).catch(console.error);
     
-    // Start polling for updates every 3 seconds
-    const pollInterval = setInterval(() => {
-      this.loadMetalTracking().then(callback).catch(console.error);
-    }, 3000);
+    // Start global polling if not already running
+    this.startGlobalPolling();
     
     return () => {
       const index = this.metalSubscribers.indexOf(callback);
       if (index > -1) {
         this.metalSubscribers.splice(index, 1);
       }
-      clearInterval(pollInterval);
+      // Stop polling if no more subscribers
+      this.checkAndStopPolling();
     };
   }
 
@@ -178,8 +230,7 @@ export class MockFirebaseService {
       method: 'POST',
       body: JSON.stringify(work),
     });
-    this.notifyWorkSubscribers();
-    return result;
+        return result;
   }
 
   static async updateWorkClosure(id: string, updates: Partial<WorkClosure>) {
@@ -187,16 +238,14 @@ export class MockFirebaseService {
       method: 'PUT',
       body: JSON.stringify(updates),
     });
-    this.notifyWorkSubscribers();
-    return result;
+        return result;
   }
 
   static async deleteWorkClosure(id: string) {
     const result = await this.apiCall(`?type=workClosures&id=${id}`, {
       method: 'DELETE',
     });
-    this.notifyWorkSubscribers();
-    return result;
+        return result;
   }
 
   private static workSubscribers: ((works: WorkClosure[]) => void)[] = [];
@@ -206,17 +255,16 @@ export class MockFirebaseService {
     
     this.loadWorkClosures().then(callback).catch(console.error);
     
-    // Start polling for updates every 3 seconds
-    const pollInterval = setInterval(() => {
-      this.loadWorkClosures().then(callback).catch(console.error);
-    }, 3000);
+    // Start global polling if not already running
+    this.startGlobalPolling();
     
     return () => {
       const index = this.workSubscribers.indexOf(callback);
       if (index > -1) {
         this.workSubscribers.splice(index, 1);
       }
-      clearInterval(pollInterval);
+      // Stop polling if no more subscribers
+      this.checkAndStopPolling();
     };
   }
 
@@ -250,8 +298,7 @@ export class MockFirebaseService {
       method: 'POST',
       body: JSON.stringify(document),
     });
-    this.notifyDocumentSubscribers();
-    return result;
+        return result;
   }
 
   static async updateDocumentTracking(id: string, updates: Partial<DocumentTracking>) {
@@ -259,16 +306,14 @@ export class MockFirebaseService {
       method: 'PUT',
       body: JSON.stringify(updates),
     });
-    this.notifyDocumentSubscribers();
-    return result;
+        return result;
   }
 
   static async deleteDocumentTracking(id: string) {
     const result = await this.apiCall(`?type=documentTracking&id=${id}`, {
       method: 'DELETE',
     });
-    this.notifyDocumentSubscribers();
-    return result;
+        return result;
   }
 
   private static documentSubscribers: ((documents: DocumentTracking[]) => void)[] = [];
@@ -278,17 +323,16 @@ export class MockFirebaseService {
     
     this.loadDocumentTracking().then(callback).catch(console.error);
     
-    // Start polling for updates every 3 seconds
-    const pollInterval = setInterval(() => {
-      this.loadDocumentTracking().then(callback).catch(console.error);
-    }, 3000);
+    // Start global polling if not already running
+    this.startGlobalPolling();
     
     return () => {
       const index = this.documentSubscribers.indexOf(callback);
       if (index > -1) {
         this.documentSubscribers.splice(index, 1);
       }
-      clearInterval(pollInterval);
+      // Stop polling if no more subscribers
+      this.checkAndStopPolling();
     };
   }
 
