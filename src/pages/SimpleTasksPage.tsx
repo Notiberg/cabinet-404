@@ -426,7 +426,12 @@ const SimpleTasksPage: React.FC = () => {
                     </label>
                     <input
                       type="date"
-                      style={inputStyle}
+                      style={{
+                        ...inputStyle,
+                        maxWidth: '100%',
+                        fontSize: '14px',
+                        padding: '12px'
+                      }}
                       value={newTask.dueDate}
                       onChange={(e) => setNewTask({ ...newTask, dueDate: e.target.value })}
                     />

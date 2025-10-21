@@ -301,7 +301,7 @@ export const useAppStore = create<AppState>()(
         state.workClosures.forEach((work) => {
           events.push({
             id: `work-${work.id}`,
-            title: `Закрытие ${work.factory}`,
+            title: `Закрытие ${work.factoryName}`,
             date: work.endDate,
             type: 'work_closure',
             status: work.status,

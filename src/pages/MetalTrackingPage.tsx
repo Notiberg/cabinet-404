@@ -488,9 +488,9 @@ const MetalTrackingPage: React.FC = () => {
                       type="date"
                       style={{
                         ...inputStyle,
-                        maxWidth: '200px',
-                        fontSize: '12px',
-                        padding: '8px'
+                        maxWidth: '100%',
+                        fontSize: '14px',
+                        padding: '12px'
                       }}
                       value={newMetal.testEndDate}
                       onChange={(e) => setNewMetal({ ...newMetal, testEndDate: e.target.value })}
